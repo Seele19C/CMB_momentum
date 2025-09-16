@@ -1,0 +1,113 @@
+/bin/bash: /home/teamzhengy_a/lijzh/miniconda3/lib/libtinfo.so.6: no version information available (required by /bin/bash)
+[NbConvertApp] Converting notebook mass_tau_6.ipynb to notebook
+Traceback (most recent call last):
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/bin/jupyter-nbconvert", line 10, in <module>
+    sys.exit(main())
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/jupyter_core/application.py", line 283, in launch_instance
+    super().launch_instance(argv=argv, **kwargs)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/traitlets/config/application.py", line 1075, in launch_instance
+    app.start()
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/nbconvertapp.py", line 420, in start
+    self.convert_notebooks()
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/nbconvertapp.py", line 597, in convert_notebooks
+    self.convert_single_notebook(notebook_filename)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/nbconvertapp.py", line 563, in convert_single_notebook
+    output, resources = self.export_single_notebook(
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/nbconvertapp.py", line 487, in export_single_notebook
+    output, resources = self.exporter.from_filename(
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/exporters/exporter.py", line 201, in from_filename
+    return self.from_file(f, resources=resources, **kw)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/exporters/exporter.py", line 220, in from_file
+    return self.from_notebook_node(
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/exporters/notebook.py", line 36, in from_notebook_node
+    nb_copy, resources = super().from_notebook_node(nb, resources, **kw)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/exporters/exporter.py", line 154, in from_notebook_node
+    nb_copy, resources = self._preprocess(nb_copy, resources)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/exporters/exporter.py", line 353, in _preprocess
+    nbc, resc = preprocessor(nbc, resc)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/preprocessors/base.py", line 48, in __call__
+    return self.preprocess(nb, resources)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/preprocessors/execute.py", line 103, in preprocess
+    self.preprocess_cell(cell, resources, index)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbconvert/preprocessors/execute.py", line 124, in preprocess_cell
+    cell = self.execute_cell(cell, index, store_history=True)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/asyncio/base_events.py", line 616, in run_until_complete
+    return future.result()
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/teamzhengy_a/lijzh/miniconda3/envs/nbodykit-env/lib/python3.8/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+P_momentum_mean = P_momentum_block.mean(axis=0)
+diff_momentum   = P_momentum_block - P_momentum_mean
+
+for ell in [0,2,4]:  
+    P_mesh_blocks = P_mesh[ell]
+    P_mesh_mean = P_mesh_blocks.mean(axis=0)
+    diff_mesh   = P_mesh_blocks - P_mesh_mean
+    cov_all_jk = (B - 1) / B * diff_mesh.T @ diff_momentum   
+    cov_mesh_jk = (B - 1) / B * diff_mesh.T @ diff_mesh 
+    var_mesh_jk = np.diag(cov_mesh_jk)                
+    sigma_mesh  = np.sqrt(var_mesh_jk)
+
+    cov_00_01[ell] = cov_all_jk
+    cov_00[ell] = cov_mesh_jk
+
+
+    plt.figure()
+    # idx_skip = 0
+    # idx_skip_2 = 0                
+    # mask = (np.arange(k_mid.size) != idx_skip) & idx_skip_2
+    plt.errorbar(k_mid, k_mid*P_mesh_mean, yerr=sigma_mesh*k_mid,
+                fmt='o', capsize=3, alpha=0.6,
+                label=f'data (mean) l={ell}')
+
+    plt.xscale('log')
+    plt.xlabel('K')
+    plt.ylabel('P')
+    plt.title(fr'K-$P_mesh$ above $10^{{{10+min_mvir}}}$ (Jackknife, 512 blocks)')
+    plt.grid(True, alpha=0.4)
+    plt.tight_layout()
+    plt.legend()
+    plt.ylim(-2000,3000)
+    plt.xlim(0.01, 0.5)
+    plt.show()
+
+
+cov_momentum_jk = (B - 1) / B * diff_momentum.T @ diff_momentum 
+var_momentum_jk = np.diag(cov_momentum_jk)                
+sigma_momentum  = np.sqrt(var_momentum_jk)
+plt.figure()
+# idx_skip = 0
+# idx_skip_2 = 0                
+# mask = (np.arange(k_mid.size) != idx_skip) & idx_skip_2
+plt.errorbar(k_mid_momentum, P_momentum_mean, yerr=sigma_momentum,
+            fmt='o', capsize=3, alpha=0.6,
+            label='data (mean)')
+
+plt.xscale('log')
+plt.xlabel('K')
+plt.ylabel('P')
+plt.title(fr'K-$P_momentum$ above $10^{{{10+min_mvir}}}$ (Jackknife, 512 blocks)')
+plt.grid(True, alpha=0.4)
+plt.tight_layout()
+plt.legend()
+plt.show()
+
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[12], line 28[0m
+[1;32m     26[0m plt[38;5;241m.[39mxlabel([38;5;124m'[39m[38;5;124mK[39m[38;5;124m'[39m)
+[1;32m     27[0m plt[38;5;241m.[39mylabel([38;5;124m'[39m[38;5;124mP[39m[38;5;124m'[39m)
+[0;32m---> 28[0m plt[38;5;241m.[39mtitle([38;5;124mfr[39m[38;5;124m'[39m[38;5;124mK-$P_mesh$ above $10^[39m[38;5;130;01m{{[39;00m[38;5;132;01m{[39;00m[38;5;241m10[39m[38;5;241m+[39mmin_mvir[38;5;132;01m}[39;00m[38;5;130;01m}}[39;00m[38;5;124m$ (Jackknife, 512 blocks)[39m[38;5;124m'[39m)
+[1;32m     29[0m plt[38;5;241m.[39mgrid([38;5;28;01mTrue[39;00m, alpha[38;5;241m=[39m[38;5;241m0.4[39m)
+[1;32m     30[0m plt[38;5;241m.[39mtight_layout()
+
+[0;31mNameError[0m: name 'min_mvir' is not defined
+
